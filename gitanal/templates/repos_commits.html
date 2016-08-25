@@ -1,0 +1,44 @@
+<html>
+<head>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<style>
+    .diff_toggle {
+        color: darkblue;
+        text-decoration: underline;
+    }
+    .diff_content {
+        display: none;
+    }
+</style>
+</head>
+
+<h1>{{ title }}</h1>
+{% for repo_commits in repos_commits %}
+ {% if repo_commits.commits %}
+     <h2>{{ repo_commits.name }}</h2>
+     {% for commit in repo_commits.commits %}
+     {% if commit.diff %}
+     <p class="diff_toggle" data-sha="{{ commit.sha }}">{{ commit.message }}</p>
+     <div class="diff_content" id="diff_{{ commit.sha }}">
+        <pre class="prettyprint">
+            {% filter escape %}
+            {{ commit.diff }}
+            {% endfilter %}
+        </pre>
+     </div>
+     {% else %}
+     <p data-sha="{{ commit.sha }}">{{ commit.message }}</p>
+     {% endif %}
+
+     {% endfor %}
+ {% endif %}
+{% endfor %}
+
+<script>
+$(".diff_toggle").click(function() {
+    $("#diff_" + $(this).data('sha')).toggle();
+});
+</script>
+
+</html>
